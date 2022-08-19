@@ -9,6 +9,8 @@ const server = express();
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser())
 
+//const database = JSON.parse(jetpack.read('./database.json'));
+//console.log(typeof(database.article))
 server.get("/", (request, response) => {
   const database = JSON.parse(jetpack.read('./database.json'));
   const artigos = database.article;
@@ -21,8 +23,9 @@ server.get("/", (request, response) => {
     listagem.push({ ...artigo, slug });
   }
 
+  console.log(listagem)
   const formattedHtml = Eta.render(html, listagem)
- 
+
   response.send(formattedHtml);
 });
 
