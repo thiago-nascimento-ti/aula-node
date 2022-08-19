@@ -9,11 +9,6 @@ const server = express();
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser())
 
-<<<<<<< HEAD
-=======
-//const database = JSON.parse(jetpack.read('./database.json'));
-//console.log(typeof(database.article))
->>>>>>> parent of 4a2b68c (modificações)
 server.get("/", (request, response) => {
   const database = JSON.parse(jetpack.read('./database.json'));
   const artigos = database.article;
@@ -26,14 +21,10 @@ server.get("/", (request, response) => {
     listagem.push({ ...artigo, slug });
   }
 
-<<<<<<< HEAD
-  const formattedHtml = Eta.render(html, listagem)
- 
-=======
-  console.log(listagem)
   const formattedHtml = Eta.render(html, listagem)
 
->>>>>>> parent of 4a2b68c (modificações)
+  const formattedHtml = Eta.render(html, listagem)
+
   response.send(formattedHtml);
 });
 
