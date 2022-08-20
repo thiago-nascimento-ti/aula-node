@@ -23,8 +23,6 @@ server.get("/", (request, response) => {
 
   const formattedHtml = Eta.render(html, listagem)
 
-  const formattedHtml = Eta.render(html, listagem)
-
   response.send(formattedHtml);
 });
 
