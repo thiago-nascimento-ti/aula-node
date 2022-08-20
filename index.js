@@ -74,12 +74,12 @@ server.get("/cadastro/:slug", (request, response) => {
 
 server.post("/cadastro", (request, response) => {
   const artigo = request.body;
-  const date = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+  var data = new Date().toJSON().slice(0,10).split('-').reverse().join('/');
   const database = JSON.parse(jetpack.read('./database.json'));
   database.article[artigo.url] = {
     title: artigo.titulo,
     content: artigo.conteudo,
-    date
+    data,
   };
   jetpack.write('./database.json', database);
 
