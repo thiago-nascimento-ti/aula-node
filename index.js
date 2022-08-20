@@ -18,7 +18,7 @@ server.get("/", (request, response) => {
   const listagem = []
   for (slug in artigos) {
     const artigo = artigos[slug];
-    listagem.push({ ...artigo, slug });
+    listagem.push({ ...artigo, slug});
   }
 
   const formattedHtml = Eta.render(html, listagem)
@@ -74,11 +74,12 @@ server.get("/cadastro/:slug", (request, response) => {
 
 server.post("/cadastro", (request, response) => {
   const artigo = request.body;
-
+  const date = new Date().toJSON().slice(0,10).replace(/-/g,'/');
   const database = JSON.parse(jetpack.read('./database.json'));
   database.article[artigo.url] = {
     title: artigo.titulo,
     content: artigo.conteudo,
+    date
   };
   jetpack.write('./database.json', database);
 
