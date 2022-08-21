@@ -67,19 +67,28 @@ server.get("/cadastro/:slug", (request, response) => {
 
   const html = jetpack.read(__dirname+"/views/editar.html");
 
-  const formattedHtml = Eta.render(html, { ...artigo, slug })
+  const formattedHtml = Eta.render(html, { ...artigo, slug})
 
   response.send(formattedHtml);
 });
 
 server.post("/cadastro", (request, response) => {
-  const artigo = request.body;
-  var data = new Date().toJSON().slice(0,10).split('-').reverse().join('/');
+  const formArticle = request.body;
+
   const database = JSON.parse(jetpack.read('./database.json'));
-  database.article[artigo.url] = {
-    title: artigo.titulo,
-    content: artigo.conteudo,
-    data,
+  const databaseArticle = database.article[formArticle.url];
+
+  let date = "";
+  if (databaseArticle?.date === undefined) {
+    date = createDate();
+  } else {
+    date = databaseArticle.date;
+  }
+
+  database.article[formArticle.url] = {
+    title: formArticle.titulo,
+    content: formArticle.conteudo,
+    date,
   };
   jetpack.write('./database.json', database);
 
@@ -90,6 +99,23 @@ server.get("/:name", (request, response) => {
   const name = request.params.name
   response.sendFile(__dirname+"/views/static/"+name);
 });
+
+function addZero(i) {
+  if (i < 10) {i = "0" + i}
+  return i;
+}
+
+function createDate() {
+  var date = "";
+  var day = new Date().toJSON().slice(0,10).split('-').reverse().join('/');
+  const d = new Date();
+  let h = addZero(d.getHours());
+  let m = addZero(d.getMinutes());
+  let s = addZero(d.getSeconds());
+  let time = h + ":" + m + ":" + s;
+  date = day + " as " + time;
+  return date;
+}
 
 server.listen(3000, () => {
   console.log("Example app listening on port 3000!")
