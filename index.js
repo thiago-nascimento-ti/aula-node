@@ -37,9 +37,15 @@ server.get("/artigo/apagar/:slug", (request, response) => {
 });
 
 server.get("/artigo/:slug", (request, response) => {
+  const database = JSON.parse(jetpack.read('./database.json'));
   const slug = request.params.slug;
 
-  const database = JSON.parse(jetpack.read('./database.json'));
+  if(database.article[slug] === undefined) {
+    const htmlNotFound = jetpack.read(__dirname+"/views/artigoNotFound.html");
+    const artigoNotFound = database.article[slug];
+    const formattedHtml = Eta.render(htmlNotFound, { ...artigoNotFound, slug })
+    response.send(formattedHtml);
+  } else {
   const artigo = database.article[slug];
 
   if (request.headers.accept === "application/json") {
@@ -49,6 +55,7 @@ server.get("/artigo/:slug", (request, response) => {
     const formattedHtml = Eta.render(html, { ...artigo, slug })
     response.send(formattedHtml);
   }
+}
 });
 
 server.get("/login", (request, response) => {
