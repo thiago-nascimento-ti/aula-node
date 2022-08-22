@@ -39,22 +39,20 @@ server.get("/artigo/apagar/:slug", (request, response) => {
 server.get("/artigo/:slug", (request, response) => {
   const database = JSON.parse(jetpack.read('./database.json'));
   const slug = request.params.slug;
+  const artigo = database.article[slug]
 
-  if(database.article[slug] === undefined) {
+  if(artigo === undefined) {
     const htmlNotFound = jetpack.read(__dirname+"/views/artigoNotFound.html");
-    const artigoNotFound = database.article[slug];
-    const formattedHtml = Eta.render(htmlNotFound, { ...artigoNotFound, slug })
-    response.send(formattedHtml);
+    const formattedHtml = Eta.render(htmlNotFound, { ...artigo, slug })
+    response.status(404).send(formattedHtml);
   } else {
-  const artigo = database.article[slug];
-
-  if (request.headers.accept === "application/json") {
-    response.json({ ...artigo, slug });
-  } else {
-    const html = jetpack.read(__dirname+"/views/artigo.html");
-    const formattedHtml = Eta.render(html, { ...artigo, slug })
-    response.send(formattedHtml);
-  }
+    if (request.headers.accept === "application/json") {
+      response.json({ ...artigo, slug });
+    } else {
+      const html = jetpack.read(__dirname+"/views/artigo.html");
+      const formattedHtml = Eta.render(html, { ...artigo, slug })
+      response.send(formattedHtml);
+    }
 }
 });
 
