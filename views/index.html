@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Página principal</h1>
-    <p>Listagem do artigos.</p>
+    <p>Listagem do artigos: </p>
     
     <% it.forEach(function(artigo){ %>
         <a href="/artigo/<%= artigo.slug %>"><%= artigo.title %></a>
@@ -15,6 +15,7 @@
 
     <br>
     <br>
+    <a href="/login">Login</a> <br/>
     <a href="/cadastro">Cadastrar novo artigo</a>
 </body>
 </html>
