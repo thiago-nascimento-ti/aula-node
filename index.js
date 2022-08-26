@@ -18,6 +18,7 @@ server.get("/", (request, response) => {
   const listagem = []
   for (slug in artigos) {
     const artigo = artigos[slug];
+    new Date(artigo.date).toLocaleDateString('pt-BR');
     listagem.push({ ...artigo, slug});
   }
 
@@ -76,19 +77,13 @@ server.post("/cadastro", (request, response) => {
   const formArticle = request.body;
 
   const database = JSON.parse(jetpack.read('./database.json'));
-  const databaseArticle = database.article[formArticle.url];
-
-  let date = "";
-  if (databaseArticle?.date === undefined) {
-    date = createDate();
-  } else {
-    date = databaseArticle.date;
-  }
+  const databaseArticle = database.article[formArticle.url] || {};
 
   database.article[formArticle.url] = {
+    date: new Date().toJSON(),
+    ...databaseArticle,
     title: formArticle.titulo,
     content: formArticle.conteudo,
-    date,
   };
   jetpack.write('./database.json', database);
 
@@ -100,22 +95,6 @@ server.get("/:name", (request, response) => {
   response.sendFile(__dirname+"/views/static/"+name);
 });
 
-function addZero(i) {
-  if (i < 10) {i = "0" + i}
-  return i;
-}
-
-function createDate() {
-  var date = "";
-  var day = new Date().toJSON().slice(0,10).split('-').reverse().join('/');
-  const d = new Date();
-  let h = addZero(d.getHours());
-  let m = addZero(d.getMinutes());
-  let s = addZero(d.getSeconds());
-  let time = h + ":" + m + ":" + s;
-  date = day + " as " + time;
-  return date;
-}
 
 server.listen(3000, () => {
   console.log("Example app listening on port 3000!")
