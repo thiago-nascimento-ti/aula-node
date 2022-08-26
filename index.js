@@ -9,7 +9,6 @@ const server = express();
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser())
 
-
 server.get("/", (request, response) => {
   const database = JSON.parse(jetpack.read('./database.json'));
   const artigos = database.article;
@@ -74,12 +73,11 @@ server.get("/cadastro/:slug", (request, response) => {
 });
 
 server.post("/cadastro", (request, response) => {
-  const owner = request.cookies.user;
   const artigo = request.body;
-
-  if(owner === undefined) {
-    return response.status(401).redirect('/login');
+  if(!request.cookies.user) {
+    return response.redirect('/login');
   }
+  const owner = request.cookies.user;
   const database = JSON.parse(jetpack.read('./database.json'));
   database.article[artigo.url] = {
     owner,
