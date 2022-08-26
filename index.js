@@ -41,19 +41,17 @@ server.get("/artigo/:slug", (request, response) => {
   const slug = request.params.slug;
   const artigo = database.article[slug]
 
-  if(artigo === undefined) {
+  if (!artigo) {
     const htmlNotFound = jetpack.read(__dirname+"/views/artigoNotFound.html");
-    const formattedHtml = Eta.render(htmlNotFound, { ...artigo, slug })
+    const formattedHtml = Eta.render(htmlNotFound, { slug })
     response.status(404).send(formattedHtml);
+  } else if (request.headers.accept === "application/json") {
+    response.json({ ...artigo, slug });
   } else {
-    if (request.headers.accept === "application/json") {
-      response.json({ ...artigo, slug });
-    } else {
-      const html = jetpack.read(__dirname+"/views/artigo.html");
-      const formattedHtml = Eta.render(html, { ...artigo, slug })
-      response.send(formattedHtml);
-    }
-}
+    const html = jetpack.read(__dirname+"/views/artigo.html");
+    const formattedHtml = Eta.render(html, { ...artigo, slug })
+    response.send(formattedHtml);
+  }
 });
 
 server.get("/login", (request, response) => {
