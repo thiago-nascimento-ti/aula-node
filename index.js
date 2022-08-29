@@ -12,7 +12,7 @@ server.use(cookieParser())
 
 server.get("/", (request, response) => {
   var owner = request.cookies.user;
-  if (owner === undefined) {
+  if (!owner) {
     owner = "Insira um email.";
   }
 
