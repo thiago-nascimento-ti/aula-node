@@ -2,7 +2,8 @@ const jetpack = require("fs-jetpack");
 const express = require("express");
 const Eta = require('eta');
 
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
+const { response } = require("express");
 const server = express();
 
 // server.use(express.json());
@@ -31,14 +32,24 @@ server.get("/", (request, response) => {
   response.send(formattedHtml);
 });
 
+server.get("/acesso-negado", (request, response) => {
+  response.sendFile(__dirname+"/views/acesso-negado.html");
+})
+
 server.get("/artigo/apagar/:slug", (request, response) => {
   const slug = request.params.slug
-
   const database = JSON.parse(jetpack.read('./database.json'));
-  delete database.article[slug];
-  jetpack.write('./database.json', database);
 
-  response.redirect("/");
+  var artigoOwner = database.article[slug].owner;
+  var owner = request.cookies.user;
+
+  if(owner != artigoOwner) {
+    return response.redirect("/acesso-negado");
+  } else {
+    delete database.article[slug];
+    jetpack.write('./database.json', database);
+    response.redirect("/");
+  }
 });
 
 server.get("/artigo/:slug", (request, response) => {
