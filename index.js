@@ -55,6 +55,56 @@ server.get("/login", (request, response) => {
   response.sendFile(__dirname+"/views/login.html");
 });
 
+server.get("/cadastroUser", (request, response) => {
+  var emailMsn = "Insira um email:";
+  var password1Msn = "Insira sua senha:";
+  var password2Msn = "Confirme a senha:";
+
+  const html = jetpack.read(__dirname+"/views/cadastroUser.html");
+  const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
+
+  response.send(formattedHtml);
+});
+
+server.post("/cadastroUser", (request, response) => {
+  const html = jetpack.read(__dirname+"/views/cadastroUser.html");
+  const database = JSON.parse(jetpack.read('./database.json'));
+  const user = request.body;
+  var emailMsn = "Insira um email:";
+  var password1Msn = "Insira sua senha:";
+  var password2Msn = "Confirme a senha:";
+
+  if(user.email !== request.cookies.user){
+    if(user.password1){
+      if(user.password1 === user.password2) {
+        database.users[user.email] = {
+          email: user.email,
+          password: user.password2,
+        };
+        jetpack.write('./database.json', database);
+        response.redirect("/");
+      } else if (!user.password2){
+        password2Msn = "Você precisa confirmar sua senha.";
+        const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
+        return response.send(formattedHtml);
+      } else if (user.password1 !== user.password2) {
+        password2Msn = "As senhas não coincidem.";
+        const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
+        return response.send(formattedHtml);
+      }
+    } else {
+      password1Msn = "Você deve inserir uma senha.";
+      const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
+      return response.send(formattedHtml);
+    }
+  } else {
+    user.email = undefined;
+    emailMsn = "email já cadastrado!";
+    const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
+    return response.send(formattedHtml);
+  }
+});
+
 server.get("/cadastro", (request, response) => {
   response.sendFile(__dirname+"/views/cadastro.html");
 });
