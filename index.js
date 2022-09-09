@@ -78,11 +78,16 @@ server.get("/cadastro/:slug", (request, response) => {
 
 server.post("/cadastro", (request, response) => {
   const formArticle = request.body;
+  if(!request.cookies.user) {
+    return response.redirect('/login');
+  }
+  const owner = request.cookies.user;
 
   const database = JSON.parse(jetpack.read('./database.json'));
   const databaseArticle = database.article[formArticle.url] || {};
 
   database.article[formArticle.url] = {
+    owner,
     date: new Date().toJSON(),
     ...databaseArticle,
     title: formArticle.titulo,
