@@ -18,7 +18,8 @@ server.get("/", (request, response) => {
   const listagem = []
   for (slug in artigos) {
     const artigo = artigos[slug];
-    listagem.push({ ...artigo, slug });
+    new Date(artigo.date).toLocaleDateString('pt-BR');
+    listagem.push({ ...artigo, slug});
   }
 
   const formattedHtml = Eta.render(html, listagem)
@@ -67,18 +68,22 @@ server.get("/cadastro/:slug", (request, response) => {
 
   const html = jetpack.read(__dirname+"/views/editar.html");
 
-  const formattedHtml = Eta.render(html, { ...artigo, slug })
+  const formattedHtml = Eta.render(html, { ...artigo, slug})
 
   response.send(formattedHtml);
 });
 
 server.post("/cadastro", (request, response) => {
-  const artigo = request.body;
+  const formArticle = request.body;
 
   const database = JSON.parse(jetpack.read('./database.json'));
-  database.article[artigo.url] = {
-    title: artigo.titulo,
-    content: artigo.conteudo,
+  const databaseArticle = database.article[formArticle.url] || {};
+
+  database.article[formArticle.url] = {
+    date: new Date().toJSON(),
+    ...databaseArticle,
+    title: formArticle.titulo,
+    content: formArticle.conteudo,
   };
   jetpack.write('./database.json', database);
 
@@ -89,6 +94,7 @@ server.get("/:name", (request, response) => {
   const name = request.params.name
   response.sendFile(__dirname+"/views/static/"+name);
 });
+
 
 server.listen(3000, () => {
   console.log("Example app listening on port 3000!")
