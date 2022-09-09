@@ -6,8 +6,13 @@
 </head>
 <body>
     <h1>Página principal</h1>
-    <p>Listagem do artigos.</p>
-    
+
+    <% if(it.length === 0){ %>
+        <p>Artigos não disponíveis no momento.</p>
+    <% } else { %>
+        <p>Listagem do artigos.</p>
+    <% } %>
+
     <% it.forEach(function(artigo){ %>
         <a href="/artigo/<%= artigo.slug %>"><%= artigo.title %></a>
         <br>
