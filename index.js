@@ -9,7 +9,6 @@ const server = express();
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser())
 
-
 server.get("/", (request, response) => {
   var owner = request.cookies.user;
   if (!owner) {
@@ -23,11 +22,12 @@ server.get("/", (request, response) => {
   const listagem = []
   for (slug in artigos) {
     const artigo = artigos[slug];
+    new Date(artigo.date).toLocaleDateString('pt-BR');
     listagem.push({ ...artigo, slug});
   }
 
-  const formattedHtml = Eta.render(html, { listagem, owner });
- 
+  const formattedHtml = Eta.render(html, listagem, owner)
+
   response.send(formattedHtml);
 });
 
@@ -42,12 +42,15 @@ server.get("/artigo/apagar/:slug", (request, response) => {
 });
 
 server.get("/artigo/:slug", (request, response) => {
-  const slug = request.params.slug;
-
   const database = JSON.parse(jetpack.read('./database.json'));
-  const artigo = database.article[slug];
+  const slug = request.params.slug;
+  const artigo = database.article[slug]
 
-  if (request.headers.accept === "application/json") {
+  if (!artigo) {
+    const htmlNotFound = jetpack.read(__dirname+"/views/artigoNotFound.html");
+    const formattedHtml = Eta.render(htmlNotFound, { slug })
+    response.status(404).send(formattedHtml);
+  } else if (request.headers.accept === "application/json") {
     response.json({ ...artigo, slug });
   } else {
     const html = jetpack.read(__dirname+"/views/artigo.html");
@@ -72,23 +75,27 @@ server.get("/cadastro/:slug", (request, response) => {
 
   const html = jetpack.read(__dirname+"/views/editar.html");
 
-  const formattedHtml = Eta.render(html, { ...artigo, slug })
+  const formattedHtml = Eta.render(html, { ...artigo, slug})
 
   response.send(formattedHtml);
 });
 
 server.post("/cadastro", (request, response) => {
-  const owner = request.cookies.user;
-  const artigo = request.body;
-
-  if(owner === undefined) {
+  const formArticle = request.body;
+  if(!request.cookies.user) {
     return response.redirect('/login');
   }
+  const owner = request.cookies.user;
+
   const database = JSON.parse(jetpack.read('./database.json'));
-  database.article[artigo.url] = {
+  const databaseArticle = database.article[formArticle.url] || {};
+
+  database.article[formArticle.url] = {
     owner,
-    title: artigo.titulo,
-    content: artigo.conteudo,
+    date: new Date().toJSON(),
+    ...databaseArticle,
+    title: formArticle.titulo,
+    content: formArticle.conteudo,
   };
   jetpack.write('./database.json', database);
 
@@ -99,6 +106,7 @@ server.get("/:name", (request, response) => {
   const name = request.params.name
   response.sendFile(__dirname+"/views/static/"+name);
 });
+
 
 server.listen(3000, () => {
   console.log("Example app listening on port 3000!")
