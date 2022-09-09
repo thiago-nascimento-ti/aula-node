@@ -38,12 +38,15 @@ server.get("/artigo/apagar/:slug", (request, response) => {
 });
 
 server.get("/artigo/:slug", (request, response) => {
-  const slug = request.params.slug;
-
   const database = JSON.parse(jetpack.read('./database.json'));
-  const artigo = database.article[slug];
+  const slug = request.params.slug;
+  const artigo = database.article[slug]
 
-  if (request.headers.accept === "application/json") {
+  if (!artigo) {
+    const htmlNotFound = jetpack.read(__dirname+"/views/artigoNotFound.html");
+    const formattedHtml = Eta.render(htmlNotFound, { slug })
+    response.status(404).send(formattedHtml);
+  } else if (request.headers.accept === "application/json") {
     response.json({ ...artigo, slug });
   } else {
     const html = jetpack.read(__dirname+"/views/artigo.html");
