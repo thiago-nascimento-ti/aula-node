@@ -10,9 +10,13 @@ server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser())
 
 server.get("/", (request, response) => {
+  var owner = request.cookies.user;
+  if (!owner) {
+    owner = "Insira um email.";
+  }
+
   const database = JSON.parse(jetpack.read('./database.json'));
   const artigos = database.article;
-
   const html = jetpack.read(__dirname+"/views/index.html");
 
   const listagem = []
@@ -22,7 +26,7 @@ server.get("/", (request, response) => {
     listagem.push({ ...artigo, slug});
   }
 
-  const formattedHtml = Eta.render(html, listagem)
+  const formattedHtml = Eta.render(html, listagem, owner)
 
   response.send(formattedHtml);
 });
