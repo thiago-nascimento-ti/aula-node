@@ -23,11 +23,10 @@ server.get("/", (request, response) => {
   const listagem = []
   for (slug in artigos) {
     const artigo = artigos[slug];
-    new Date(artigo.date).toLocaleDateString('pt-BR');
     listagem.push({ ...artigo, slug});
   }
 
-  const formattedHtml = Eta.render(html, listagem, owner)
+  const formattedHtml = Eta.render(html, { listagem, owner })
 
   response.send(formattedHtml);
 });
@@ -98,12 +97,20 @@ server.post("/cadastro", (request, response) => {
   }
   const owner = request.cookies.user;
 
+  var options = {     year: 'numeric',
+  month: ('long' || 'short' || 'numeric'),
+  weekday: ('long' || 'short'),
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',};
+
   const database = JSON.parse(jetpack.read('./database.json'));
   const databaseArticle = database.article[formArticle.url] || {};
 
   database.article[formArticle.url] = {
     owner,
-    date: new Date().toJSON(),
+    date: new Date().toLocaleDateString('pt-br', options),
     ...databaseArticle,
     title: formArticle.titulo,
     content: formArticle.conteudo,
