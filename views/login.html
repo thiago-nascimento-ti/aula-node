@@ -6,11 +6,22 @@
 </head>
 <body>
     <h1>Login de usuário</h1>
-    <label for="email">Insira seu email abaixo: </label>
-    <input name="email" id="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" size="30" required>
-    <button onclick="setCookie()">Enviar</button>
-    <br>
-    <br>
+    <form action="/login" method="post">
+        <label for="email">Email</label>
+        <input name="email" id="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" size="30" required placeholder="Ex: aaaa@.com">
+        <br/>
+        <br/>
+        <label for="password"> Password</label>
+        <input name="password" id="password" pattern=".{4,}" placeholder="4 números ou mais.">
+        <br/>
+        <br/>
+        <button type="submit">Enviar</button>
+    </form>
+    <br/>
+    <br/>
+    <%= it %>
+    <br/>
+    <br/>
     <a href="/">Voltar</a>
 </body>
 <script src="/script.js"></script>

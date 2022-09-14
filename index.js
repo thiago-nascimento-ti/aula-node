@@ -22,7 +22,7 @@ server.get("/", (request, response) => {
   }
 
   const formattedHtml = Eta.render(html, listagem)
- 
+  
   response.send(formattedHtml);
 });
 
@@ -52,7 +52,38 @@ server.get("/artigo/:slug", (request, response) => {
 });
 
 server.get("/login", (request, response) => {
-  response.sendFile(__dirname+"/views/login.html");
+  const html = jetpack.read(__dirname+"/views/login.html");
+  const feedback = "";
+  const formattedHtml = Eta.render( html, feedback );
+  response.send(formattedHtml);
+});
+
+server.post("/login", (request, response) => {
+  const html = jetpack.read(__dirname+"/views/login.html");
+  const database = JSON.parse(jetpack.read('./database.json'));
+  const userLog = request.cookies.user;
+  const dataReq = request.body;
+  const comparative = database.users[dataReq.email];
+
+  if(comparative) {
+    if(dataReq.password === comparative.password) {
+      if(dataReq.email === userLog) {
+        const feedback = "Você ja esta logado.";
+        const formattedHtml = Eta.render(html, feedback)
+        response.send(formattedHtml);
+      } else {
+        response.cookie('user', dataReq.email).redirect("/")
+      }
+    } else {
+      const feedback = "A senha esta errada.";
+      const formattedHtml = Eta.render(html, feedback)
+      response.send(formattedHtml);
+    }
+  } else {
+    const feedback = "O email não existe.";
+    const formattedHtml = Eta.render(html, feedback)
+    response.send(formattedHtml);
+  }
 });
 
 server.get("/cadastroUser", (request, response) => {
@@ -62,7 +93,6 @@ server.get("/cadastroUser", (request, response) => {
 
   const html = jetpack.read(__dirname+"/views/cadastroUser.html");
   const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
-
   response.send(formattedHtml);
 });
 
@@ -70,19 +100,20 @@ server.post("/cadastroUser", (request, response) => {
   const html = jetpack.read(__dirname+"/views/cadastroUser.html");
   const database = JSON.parse(jetpack.read('./database.json'));
   const user = request.body;
+
   var emailMsn = "Insira um email:";
   var password1Msn = "Insira sua senha:";
   var password2Msn = "Confirme a senha:";
 
   if(user.email !== request.cookies.user){
     if(user.password1){
-      if(user.password1 === user.password2) {
+      if(user.password1 === user.password2){
         database.users[user.email] = {
           email: user.email,
           password: user.password2,
         };
         jetpack.write('./database.json', database);
-        response.redirect("/");
+        response.cookie('user', user.email).redirect("/");
       } else if (!user.password2){
         password2Msn = "Você precisa confirmar sua senha.";
         const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
