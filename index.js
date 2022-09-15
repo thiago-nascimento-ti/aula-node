@@ -65,20 +65,24 @@ server.post("/login", (request, response) => {
   const dataReq = request.body;
   const comparative = database.users[dataReq.email];
 
-  var userTokenLog = false;
-  jwt.verify(request.cookies.user, '1234', function(err, decoded) {
-    userTokenLog = decoded.user;
-  });
-
   if(comparative) {
     if(dataReq.password === comparative.password) {
-      if(dataReq.email === userTokenLog) {
-        const feedback = "Você ja esta logado.";
-        const formattedHtml = Eta.render(html, feedback)
-        response.send(formattedHtml);
-      } else {
+      if(!request.cookies.user){
         const token = jwt.sign({ user: dataReq.email}, '1234');
         response.cookie('user', token).redirect("/");
+      } else {
+        var userTokenLog = false;
+        jwt.verify(request.cookies.user, '1234', function(err, decoded) {
+          userTokenLog = decoded.user;
+        });
+        if(dataReq.email === userTokenLog) {
+          const feedback = "Você ja esta logado.";
+          const formattedHtml = Eta.render(html, feedback)
+          response.send(formattedHtml);
+        } else {
+          const token = jwt.sign({ user: dataReq.email}, '1234');
+          response.cookie('user', token).redirect("/");
+        }
       }
     } else {
       const feedback = "A senha esta errada.";
