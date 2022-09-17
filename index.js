@@ -2,6 +2,7 @@ const jetpack = require("fs-jetpack");
 const express = require("express");
 const Eta = require('eta');
 const jwt = require('jsonwebtoken');
+const passwordCookie = '1234';
 
 var cookieParser = require('cookie-parser')
 const server = express();
@@ -68,7 +69,7 @@ server.post("/login", (request, response) => {
   if(comparative) {
     if(dataReq.password === comparative.password) {
       if(!request.cookies.user){
-        const token = jwt.sign({ user: dataReq.email}, '1234');
+        const token = jwt.sign({ user: dataReq.email}, passwordCookie);
         response.cookie('user', token).redirect("/");
       } else {
         var userTokenLog = false;
@@ -80,7 +81,7 @@ server.post("/login", (request, response) => {
           const formattedHtml = Eta.render(html, feedback)
           response.send(formattedHtml);
         } else {
-          const token = jwt.sign({ user: dataReq.email}, '1234');
+          const token = jwt.sign({ user: dataReq.email}, passwordCookie);
           response.cookie('user', token).redirect("/");
         }
       }
@@ -128,7 +129,7 @@ server.post("/cadastroUser", (request, response) => {
             password: user.password2,
           };
           jetpack.write('./database.json', database);
-          const token = jwt.sign({ user: user.email}, '1234');
+          const token = jwt.sign({ user: user.email}, passwordCookie);
           response.cookie('user', token).redirect("/");
         } else if (!user.password2){
           password2Msn = "Você precisa confirmar sua senha.";
