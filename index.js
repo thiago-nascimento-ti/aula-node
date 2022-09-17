@@ -63,9 +63,9 @@ server.post("/login", (request, response) => {
   const database = JSON.parse(jetpack.read('./database.json'));
   const userLog = request.cookies.user;
   const dataReq = request.body;
-  const comparative = database.users[dataReq.email];
+  const isEmailExistent = database.users[dataReq.email];
 
-  if(comparative) {
+  if(isEmailExistent) {
     if(dataReq.password === comparative.password) {
       if(dataReq.email === userLog) {
         const feedback = "Você ja esta logado.";
