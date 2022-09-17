@@ -86,24 +86,24 @@ server.post("/login", (request, response) => {
   }
 });
 
-server.get("/cadastroUser", (request, response) => {
-  var emailMsn = "Insira um email:";
-  var password1Msn = "Insira sua senha:";
-  var password2Msn = "Confirme a senha:";
+server.get("/cadastro-user", (request, response) => {
+  const emailMsn = "Insira um email:";
+  const password1Msn = "Insira sua senha:";
+  const password2Msn = "Confirme a senha:";
 
-  const html = jetpack.read(__dirname+"/views/cadastroUser.html");
+  const html = jetpack.read(__dirname+"/views/cadastro-user.html");
   const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
   response.send(formattedHtml);
 });
 
-server.post("/cadastroUser", (request, response) => {
-  const html = jetpack.read(__dirname+"/views/cadastroUser.html");
+server.post("/cadastro-user", (request, response) => {
+  const html = jetpack.read(__dirname+"/views/cadastro-user.html");
   const database = JSON.parse(jetpack.read('./database.json'));
   const user = request.body;
-
-  var emailMsn = "Insira um email:";
-  var password1Msn = "Insira sua senha:";
-  var password2Msn = "Confirme a senha:";
+  
+  let emailMsn = "Insira um email:";
+  let password1Msn = "Insira sua senha:";
+  let password2Msn = "Confirme a senha:";
 
   if(user.email !== request.cookies.user){
     if(user.password1){
