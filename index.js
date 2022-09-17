@@ -110,7 +110,7 @@ server.post("/cadastro", (request, response) => {
 
   database.article[formArticle.url] = {
     owner,
-    date: new Date().toLocaleDateString('pt-br', options),
+    date: new Date().toJSON(),
     ...databaseArticle,
     title: formArticle.titulo,
     content: formArticle.conteudo,
