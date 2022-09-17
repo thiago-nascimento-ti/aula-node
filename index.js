@@ -23,7 +23,8 @@ server.get("/", (request, response) => {
   const listagem = []
   for (slug in artigos) {
     const artigo = artigos[slug];
-    listagem.push({ ...artigo, slug});
+    const date = new Date(artigo.date).toLocaleDateString('pt-BR')
+    listagem.push({ ...artigo, slug, date });
   }
 
   const formattedHtml = Eta.render(html, { listagem, owner })
