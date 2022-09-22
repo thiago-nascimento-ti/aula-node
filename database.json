@@ -2,9 +2,22 @@
   "article": {
     "AAAAAAAAA": {
       "owner": "neyderzyn@gmail.com",
-      "date": "segunda-feira, 12 de setembro de 2022 16:46:16",
       "title": "AAAAAAAAA",
       "content": ""
+    }
+  },
+  "users": {
+    "nadersirio@gmail.com": {
+      "email": "nadersirio@gmail.com",
+      "password": "aaaa"
+    },
+    "nadersirio@g.com": {
+      "email": "nadersirio@g.com",
+      "password": "aaaa"
+    },
+    "neyderzyn@gmail.com": {
+      "email": "neyderzyn@gmail.com",
+      "password": "aaaa"
     }
   }
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <h1>Insira seus dados: </h1>
+    <form action="/cadastro-user" method="post">
+        <label for="email"><%= it.emailMsn %> </label>
+        <input name="email" id="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" size="30" required placeholder="Ex: aaaa@.com">
+        <br/>
+        <br/>
+        <label for="password"><%= it.password1Msn %> </label>
+        <input name="password1" id="password1" pattern=".{4,}" placeholder="4 números ou mais.">
+        <br/>
+        <br/>
+        <label for="password"><%= it.password2Msn %> </label>
+        <input name="password2" id="password2" pattern=".{4,}">
+        <br/>
+        <br/>
+        <button type="submit">Criar</button>
+    </form>
+    <br/>
+    <br/>
+    <br/>
+    <a href="/">voltar</a> <br/>
+</body>
+</html>
