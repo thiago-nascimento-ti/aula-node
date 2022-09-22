@@ -85,7 +85,7 @@ server.post("/login", (request, response) => {
   const isEmailExistent = database.users[dataReq.email];
 
   if(isEmailExistent) {
-    if(dataReq.password === comparative.password) {
+    if(dataReq.password === isEmailExistent.password) {
       if(dataReq.email === userLog) {
         const feedback = "Você ja esta logado.";
         const formattedHtml = Eta.render(html, feedback)
@@ -110,13 +110,13 @@ server.get("/cadastro-user", (request, response) => {
   const password1Msn = "Insira sua senha:";
   const password2Msn = "Confirme a senha:";
 
-  const html = jetpack.read(__dirname+"/views/cadastro-user.html");
+  const html = jetpack.read(__dirname+"/views/cadastroUser.html");
   const formattedHtml = Eta.render(html, { emailMsn, password1Msn, password2Msn });
   response.send(formattedHtml);
 });
 
 server.post("/cadastro-user", (request, response) => {
-  const html = jetpack.read(__dirname+"/views/cadastro-user.html");
+  const html = jetpack.read(__dirname+"/views/cadastroUser.html");
   const database = JSON.parse(jetpack.read('./database.json'));
   const user = request.body;
   
