@@ -23,11 +23,11 @@ server.get("/", (request, response) => {
   const listagem = []
   for (slug in artigos) {
     const artigo = artigos[slug];
-    new Date(artigo.date).toLocaleDateString('pt-BR');
-    listagem.push({ ...artigo, slug});
+    const date = new Date(artigo.date).toLocaleDateString('pt-BR')
+    listagem.push({ ...artigo, slug, date });
   }
 
-  const formattedHtml = Eta.render(html, { listagem, owner} )
+  const formattedHtml = Eta.render(html, { listagem, owner })
 
   response.send(formattedHtml);
 });
@@ -178,6 +178,14 @@ server.post("/cadastro", (request, response) => {
     return response.redirect('/login');
   }
   const owner = request.cookies.user;
+
+  var options = {     year: 'numeric',
+  month: ('long' || 'short' || 'numeric'),
+  weekday: ('long' || 'short'),
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',};
 
   const database = JSON.parse(jetpack.read('./database.json'));
   const databaseArticle = database.article[formArticle.url] || {};

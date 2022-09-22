@@ -13,7 +13,7 @@
         <p>Listagem do artigos.</p>
     <% } %>
 
-    <% it.forEach(function(artigo){ %>
+    <% it.listagem.forEach(function(artigo){ %>
         <a href="/artigo/<%= artigo.slug %>"><%= artigo.title %></a>
         <br>
     <% }) %>
